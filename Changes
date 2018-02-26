@@ -1,0 +1,5 @@
+Revision history for Plack::Middleware::StatsPerRequest
+
+0.042   2018-02-26T16:37:22
+    - first (birthday!) release
+
