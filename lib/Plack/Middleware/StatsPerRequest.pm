@@ -13,7 +13,7 @@ use parent 'Plack::Middleware';
 use Plack::Util::Accessor qw( app_name metric_name path_cleanups add_headers long_request );
 use Plack::Request;
 use Log::Any qw($log);
-use Measure::Everything qw($stats);
+use Measure::Everything 1.002 qw($stats);
 use HTTP::Headers::Fast;
 
 sub prepare_app {
