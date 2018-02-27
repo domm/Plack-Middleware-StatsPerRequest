@@ -82,6 +82,55 @@ sub call {
     );
 }
 
+=method replace_idish
+
+  my $clean = Plack::Middleware::StatsPerRequest::replace_idish( $dirty );
+
+Takes a URI path and replaces things that look like ids with fixed
+strings, so you can calc proper stats on the generic paths.
+
+This is the default L<path_cleanups> action, so unless you specify
+your own, or explicitly set L<path_cleanups> to an empty array, the
+following transformations will be done on the path:
+
+=over
+
+=item * A path fragment looking like a SHA1 checksum is replaced by
+C<:sha1>
+
+=item * A path fragment looking like a UUID is replaced by C<:uuid>
+
+=item * Any part of the path consisting of 6 or more digits is
+replaced by C<:int>
+
+=item * A path fragment consisting solely of digits is also replaced
+by C<:int>
+
+=item * A path fragment looking like hex is replaced by C<:hex>
+
+=item * A path fragment longer than 55 characters is replaced by
+C<:long>
+
+=item * A chain of path fragments looking like hex is replaced by
+C<:hexpath>
+
+=item * A path fragment looking like an email message id (as generated
+by one of our tools) is replaced by C<:msgid>
+
+=item * A path fragment looking like C<300x200> is replaced by
+C<:imgdim>
+
+=back
+
+For details, please inspect the source code and
+F<t/20_replace_idish.t>.
+
+These transformations proved useful in the two years we used
+C<Plack::Middleware::StatsPerRequest> in house. If you have any
+additions or change requests, just tell us!
+
+=cut
+
 sub replace_idish {
     my $path = shift;
     $path = lc($path . '/');
