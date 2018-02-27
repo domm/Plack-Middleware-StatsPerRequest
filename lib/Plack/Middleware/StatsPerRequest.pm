@@ -85,14 +85,18 @@ sub call {
 sub replace_idish {
     my $path = shift;
     $path = lc($path . '/');
+
     $path =~ s{/[a-f0-9\-.]+\@[a-z0-9\-.]+/}{/:msgid/}g;
+    $path =~ s{/[a-f0-9]+\/[a-f0-9\/]+/}{/:hexpath/}g;
+
     $path =~ s([a-f0-9]{40})(:sha1)g;
-    $path =~ s{/([a-f0-9\/]+)/}{/:hexpath/}g;
     $path =~ s([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})(:uuid)g;
-    $path =~ s(/[^/]{55,}/)(/:long/)g;
-    $path =~ s(/[a-f0-9\-]{4,})(/:hex)g;
-    $path =~ s{/\d+/}{/:int/}g;
+    $path =~ s(\d{6,})(:int)g;
     $path =~ s{\d+x\d+}{:imgdim}g;
+
+    $path =~ s{/\d+/}{/:int/}g;
+    $path =~ s(/[^/]{55,}/)(/:long/)g;
+    $path =~ s(/[a-f0-9\-]{8,}/)(/:hex/)g;
 
     return substr($path, 0, -1);
 }
