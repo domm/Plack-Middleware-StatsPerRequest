@@ -15,6 +15,13 @@ on 'build' => sub {
 };
 
 on 'test' => sub {
+  requires "Data::Dumper" => "0";
+  requires "FindBin" => "0";
+  requires "HTTP::Request::Common" => "0";
+  requires "Log::Any::Test" => "0";
+  requires "Measure::Everything::Adapter" => "0";
+  requires "Plack::Builder" => "0";
+  requires "Plack::Test" => "0";
   requires "Test::More" => "0";
 };
 

@@ -2,7 +2,7 @@ package Plack::Middleware::StatsPerRequest;
 
 # ABSTRACT: Measure HTTP stats on each request
 
-our $VERSION = '0.042';
+our $VERSION = '0.900';
 
 use strict;
 use warnings;
@@ -96,30 +96,30 @@ following transformations will be done on the path:
 
 =over
 
-=item * A path fragment looking like a SHA1 checksum is replaced by
-C<:sha1>
+=item * All path fragments looking like a SHA1 checksum are replaced by
+C<:sha1>.
 
-=item * A path fragment looking like a UUID is replaced by C<:uuid>
+=item * All path fragments looking like a UUID are replaced by C<:uuid>.
 
 =item * Any part of the path consisting of 6 or more digits is
-replaced by C<:int>
+replaced by C<:int>.
 
-=item * A path fragment consisting solely of digits is also replaced
-by C<:int>
+=item * A llpath fragments consisting solely of digits are also replaced
+by C<:int>.
 
-=item * A path fragment looking like hex is replaced by C<:hex>
+=item * All path fragments looking like hex are replaced by C<:hex>.
 
-=item * A path fragment longer than 55 characters is replaced by
-C<:long>
+=item * All path fragments longer than 55 characters are replaced by
+C<:long>.
 
-=item * A chain of path fragments looking like hex is replaced by
-C<:hexpath>
+=item * A chain of path fragments looking like hex-code is replaced by
+C<:hexpath>.
 
-=item * A path fragment looking like an email message id (as generated
-by one of our tools) is replaced by C<:msgid>
+=item * All path fragments looking like an email message id (as generated
+by one of our tools) are replaced by C<:msgid>.
 
-=item * A path fragment looking like C<300x200> is replaced by
-C<:imgdim>
+=item * All path fragments looking like C<300x200> are replaced by
+C<:imgdim>. (Of course this happens for all formats, not just 300 and 200).
 
 =back
 
@@ -151,7 +151,7 @@ sub replace_idish {
     return substr($path, 0, -1);
 }
 
-42;
+"42nd birthday release";
 
 __END__
 
@@ -162,7 +162,6 @@ __END__
   Measure::Everything::Adapter->set('InfluxDB::File', {
       file => '/tmp/yourapp.stats',
   });
-
 
   builder {
       enable "Plack::Middleware::StatsPerRequest",
@@ -175,21 +174,85 @@ __END__
   # cat /tmp/yourapp.stats
     http_request,app=YourApp,method=GET,path=/some/path,status=400 hit=1i,request_time=0.02476 1519658691411352000
 
-
 =head1 DESCRIPTION
 
-C<Plack::Middleware::StatsPerRequest> lets you measure your all your
+C<Plack::Middleware::StatsPerRequest> lets you collect stats about all your
 HTTP requests via L<Measure::Everything>.
+C<Plack::Middleware::StatsPerRequest> calculates the duration of a
+requests and collects some additonal data like request path, HTTP
+method and response status.
 
-More docs & tests TODO as this is quick birthday release :-)
+You can then use this data to plot some nice graps, find bottlenecks
+or set up alerts; or do anything else your stats toolkit supports.
 
 =head2 Configuration
 
-TODO
+  enable "Plack::Middleware::StatsPerRequest",
+      metric_name   => 'http',
+      app_name      => 'YourApp',
+      path_cleanups => [ \&your_custom_cleanup, \&another_cleanup ],
+      add_headers   => [ qw( Accept-Language X-Requested-With )],
+      long_request  => 3
+  ;
+
+=head3 metric_name
+
+The name of the metric generated. Defaults to C<http_request>.
+
+=head3 app_name
+
+The name of your application. Defaults to C<unknown>.
+
+C<app_name> will be added to each metric as a tag.
+
+=head3 path_cleanups
+
+A list of functions to be called to transform / cleanup the request
+path. Defaults to C<[ 'replace_idish' ]>.
+
+Set to an empty list to do no path cleanups. This is not recommended,
+unless your statistic tool can normalize paths which might include a
+lot of distinct ids etc; or your app does not include ids in its URLs
+(maybe they are all passed via query params?)
+
+See L<replace_idish> for more info on the default path cleanup handler.
+
+=head3 add_headers
+
+A list of HTTP header fields. Default to C<[ ]> (empty list).
+
+If you use C<add_headers>, all HTTP headers matching the ones provided
+will be added as a tag, with the respective header values as the tag
+values.
+
+   enable "Plack::Middleware::StatsPerRequest",
+            add_headers => [ 'Accept-Language' ];
+   # header_accept-language=Accept-Language
+
+If a header is not sent by a client, a value of C<not_set> will be reported.
+
+=head3 long_request
+
+Requests taking longer than C<long_request> seconds will be logged as
+a C<warning>. Defaults to C<5> seconds.
+
+Set to C<0> to turn off.
+
+   enable "Plack::Middleware::StatsPerRequest",
+            long_request => 10;
+   # curl http://localhost/very/slow/endpoint
+   # cat /log/warnings
+     Long request, took 23.042: GET /very/slow/endpoint
 
 =head1 SEE ALSO
 
-TODO
+=over
+
+=item * L<Measure::Everything> is used to actually report the stats
+
+=item * L<Log::Any> is used for logging.
+
+=back
 
 =head1 THANKS
 
