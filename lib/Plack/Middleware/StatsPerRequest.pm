@@ -19,6 +19,7 @@ use HTTP::Headers::Fast;
 sub prepare_app {
     my $self = shift;
 
+    $self->app_name('unknown') unless $self->app_name;
     $self->metric_name('http_request') unless $self->metric_name;
     $self->path_cleanups([\&replace_idish]) unless $self->path_cleanups;
     $self->long_request(5) unless defined $self->long_request;
@@ -55,7 +56,7 @@ sub call {
             if (my $headers_to_add = $self->add_headers) {
                 foreach my $header (@$headers_to_add) {
                     $req = Plack::Request->new( $env );
-                    $tags{'header_'.$header} = $req->header($header) // 'not_set';
+                    $tags{'header_'.lc($header)} = $req->header($header) // 'not_set';
                 }
             }
 
