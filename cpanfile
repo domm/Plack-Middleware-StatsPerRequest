@@ -1,6 +1,6 @@
 requires "HTTP::Headers::Fast" => "0";
 requires "Log::Any" => "0";
-requires "Measure::Everything" => "0";
+requires "Measure::Everything" => "1.002";
 requires "Plack::Middleware" => "0";
 requires "Plack::Request" => "0";
 requires "Plack::Util::Accessor" => "0";
@@ -15,7 +15,6 @@ on 'build' => sub {
 };
 
 on 'test' => sub {
-  requires "Data::Dumper" => "0";
   requires "FindBin" => "0";
   requires "HTTP::Request::Common" => "0";
   requires "Log::Any::Test" => "0";
