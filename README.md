@@ -4,7 +4,7 @@ Plack::Middleware::StatsPerRequest - Measure HTTP stats on each request
 
 # VERSION
 
-version 0.900
+version 0.901
 
 # SYNOPSIS
 
@@ -81,6 +81,18 @@ values.
     # header_accept-language=Accept-Language
 
 If a header is not sent by a client, a value of `not_set` will be reported.
+
+### has\_headers
+
+A list of HTTP header fields. Default to `[ ]` (empty list).
+
+Checks if a HTTP header is set, and adds a tag containing 1 or 0. This
+makes sense if you just what to count if a header was sent, but don't
+care about it's content (eg a bearer token):
+
+    enable "Plack::Middleware::StatsPerRequest",
+             has_headers => [ 'Authorization' ];
+    # has_header_authorization=1
 
 ### long\_request
 
