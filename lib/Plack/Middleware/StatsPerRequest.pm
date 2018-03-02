@@ -10,7 +10,7 @@ use 5.010;
 use Time::HiRes qw();
 
 use parent 'Plack::Middleware';
-use Plack::Util::Accessor qw( app_name metric_name path_cleanups add_headers long_request );
+use Plack::Util::Accessor qw( app_name metric_name path_cleanups add_headers has_headers long_request );
 use Plack::Request;
 use Log::Any qw($log);
 use Measure::Everything 1.002 qw($stats);
@@ -23,6 +23,13 @@ sub prepare_app {
     $self->metric_name('http_request') unless $self->metric_name;
     $self->path_cleanups([\&replace_idish]) unless $self->path_cleanups;
     $self->long_request(5) unless defined $self->long_request;
+    foreach my $check (qw(add_headers has_headers)) {
+        my $val = $self->$check;
+        if ($val && ref($val) ne 'ARRAY') {
+            $log->warn("Plack::Middleware::StatsPerRequest $check has to be an ARRAYREF, ignoring $val");
+            $self->$check(undef);
+        }
+    }
 }
 
 sub call {
@@ -54,9 +61,15 @@ sub call {
                 path   => $path,
             );
             if (my $headers_to_add = $self->add_headers) {
+                $req = Plack::Request->new( $env );
                 foreach my $header (@$headers_to_add) {
-                    $req = Plack::Request->new( $env );
                     $tags{'header_'.lc($header)} = $req->header($header) // 'not_set';
+                }
+            }
+            if (my $has_headers = $self->has_headers) {
+                $req ||= Plack::Request->new( $env );
+                foreach my $header (@$has_headers) {
+                    $tags{'has_header_'.lc($header)} = $req->header($header) ? 1 : 0;
                 }
             }
 
@@ -230,6 +243,18 @@ values.
    # header_accept-language=Accept-Language
 
 If a header is not sent by a client, a value of C<not_set> will be reported.
+
+=head3 has_headers
+
+A list of HTTP header fields. Default to C<[ ]> (empty list).
+
+Checks if a HTTP header is set, and adds a tag containing 1 or 0. This
+makes sense if you just what to count if a header was sent, but don't
+care about it's content (eg a bearer token):
+
+   enable "Plack::Middleware::StatsPerRequest",
+            has_headers => [ 'Authorization' ];
+   # has_header_authorization=1
 
 =head3 long_request
 
