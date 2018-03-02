@@ -12,6 +12,8 @@ use Measure::Everything qw($stats);
 use Log::Any::Test;
 use Log::Any qw($log);
 
+use Time::HiRes qw(usleep);
+
 my $app = sub {
     my $env = shift;
 
@@ -212,7 +214,7 @@ subtest 'add_headers' => sub {
 
 my $slow_app = sub {
     my $env = shift;
-    sleep(1);
+    usleep(1_500_000);
     return [ 200, [ 'Content-Type' => 'text/plain' ],
         ['measure everything!'] ];
 };
