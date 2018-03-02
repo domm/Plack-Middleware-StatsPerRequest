@@ -287,8 +287,16 @@ subtest 'add/has_headers not an array' => sub {
     };
 
     my $msgs = $log->msgs;
-    like($msgs->[0]{message},qr/add_headers has to be an ARRAYREF, ignoring Accept-Language/,'got warning about bad add_headers');
-    like($msgs->[1]{message},qr/has_headers has to be an ARRAYREF, ignoring X-SOME-HEADER/,'got warning about bad has_headers');
+    like(
+        $msgs->[0]{message},
+        qr/add_headers has to be an ARRAYREF, ignoring Accept-Language/,
+        'got warning about bad add_headers'
+    );
+    like(
+        $msgs->[1]{message},
+        qr/has_headers has to be an ARRAYREF, ignoring X-SOME-HEADER/,
+        'got warning about bad has_headers'
+    );
 };
 
 my $slow_app = sub {
