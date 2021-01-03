@@ -1,6 +1,8 @@
 Revision history for Plack::Middleware::StatsPerRequest
 
 {{$NEXT}}
+
+0.902     2021-01-03 18:03:04+01:00
     - dist housekeeping: github issues,
       Dist::Zilla::PluginBundle::Author::DOMM
 
