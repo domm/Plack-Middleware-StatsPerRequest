@@ -2,7 +2,7 @@ package Plack::Middleware::StatsPerRequest;
 
 # ABSTRACT: Measure HTTP stats on each request
 
-our $VERSION = '0.901';
+# VERSION
 
 use strict;
 use warnings;

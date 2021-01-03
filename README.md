@@ -4,7 +4,7 @@ Plack::Middleware::StatsPerRequest - Measure HTTP stats on each request
 
 # VERSION
 
-version 0.901
+version 0.902
 
 # SYNOPSIS
 
@@ -28,7 +28,7 @@ version 0.901
 # DESCRIPTION
 
 `Plack::Middleware::StatsPerRequest` lets you collect stats about all your
-HTTP requests via [Measure::Everything](https://metacpan.org/pod/Measure::Everything).
+HTTP requests via [Measure::Everything](https://metacpan.org/pod/Measure%3A%3AEverything).
 `Plack::Middleware::StatsPerRequest` calculates the duration of a
 requests and collects some additonal data like request path, HTTP
 method and response status.
@@ -146,8 +146,8 @@ additions or change requests, just tell us!
 
 # SEE ALSO
 
-- [Measure::Everything](https://metacpan.org/pod/Measure::Everything) is used to actually report the stats
-- [Log::Any](https://metacpan.org/pod/Log::Any) is used for logging.
+- [Measure::Everything](https://metacpan.org/pod/Measure%3A%3AEverything) is used to actually report the stats
+- [Log::Any](https://metacpan.org/pod/Log%3A%3AAny) is used for logging.
 
 # THANKS
 
@@ -157,11 +157,11 @@ Thanks to
 
 # AUTHOR
 
-Thomas Klausner <domm@cpan.org>
+Thomas Klausner <domm@plix.at>
 
 # COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2018 by Thomas Klausner.
+This software is copyright (c) 2018 - 2021 by Thomas Klausner.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
